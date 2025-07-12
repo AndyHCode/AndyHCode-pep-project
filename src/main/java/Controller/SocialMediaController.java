@@ -48,7 +48,17 @@ public class SocialMediaController {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
 
+        if (account.getPassword().length() < 4){
+            ctx.status(400);
+            return;
+        }
+        if (account.getUsername() == ""){
+            ctx.status(400);
+            return;
+        }
+
         // register user here
+
         Account addedAccount = accountService.addAccount(account);
         // 
         if (addedAccount != null){
