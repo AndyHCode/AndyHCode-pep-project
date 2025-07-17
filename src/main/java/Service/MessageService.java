@@ -12,6 +12,9 @@ public class MessageService {
     public Message addMessage(Message message){
         return messageDAO.insertMessage(message);
     }
+    public Message getMessage(int messageID){
+        return messageDAO.getMessage(messageID);
+    }
     
     
 }
