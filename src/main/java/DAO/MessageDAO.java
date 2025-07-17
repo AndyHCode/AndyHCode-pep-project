@@ -9,6 +9,28 @@ import java.util.List;
 public class MessageDAO {
 
 
+    public Message patchMessageByID(int messageID, Message message){
+        Message oldMessage = getMessageByID(messageID);
+        if (oldMessage == null){
+            return null;
+        }
+        Connection connection = ConnectionUtil.getConnection();
+        try{
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, messageID);
+            if (preparedStatement.executeUpdate() == 0){
+                return null;
+            }
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+
+        return getMessageByID(messageID);
+    }
+
+
     public List<Message> getAllMessagesByAccountID(int accountID){
         List<Message> messages = new ArrayList<>();
 
@@ -49,7 +71,9 @@ public class MessageDAO {
             String sql = "DELETE FROM message WHERE message_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, messageID);
-            preparedStatement.executeUpdate();
+            if (preparedStatement.executeUpdate() == 0){
+                return null;
+            }
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }

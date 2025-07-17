@@ -52,12 +52,28 @@ public class SocialMediaController {
         app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountID);
         
         app.delete("/messages/{message_id}", this::deleteMessageByID);
-        //app.patch("/messages/{message_id}", this::patchMessageByID);
+        app.patch("/messages/{message_id}", this::patchMessageByID);
 
 
 
 
         return app;
+    }
+
+    private void patchMessageByID(Context ctx){
+        int messageID = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = ctx.bodyAsClass(Message.class);
+        if (message.getMessage_text().length() > 255 || message.getMessage_text() == ""){
+            ctx.status(400);
+            return;
+        }
+
+        Message newMessage = messageService.patchMessageByID(messageID, message);
+        if (newMessage != null) {
+            ctx.json(newMessage);
+        } else {
+            ctx.status(400);
+        }
     }
 
     private void getAllMessagesByAccountID (Context ctx){

@@ -6,6 +6,10 @@ import java.util.List;
 public class MessageService {
     private MessageDAO messageDAO;
 
+    public Message patchMessageByID(int messageID, Message message){
+        return messageDAO.patchMessageByID(messageID, message);
+    }
+
     public List<Message> getAllMessagesByAccountID(int accountID){
         return messageDAO.getAllMessagesByAccountID(accountID);
 
