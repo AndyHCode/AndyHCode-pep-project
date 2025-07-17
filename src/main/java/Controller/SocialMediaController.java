@@ -10,6 +10,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 
@@ -37,12 +38,35 @@ public class SocialMediaController {
 
         app.post("/register", this::postRegister);
         app.post("/login", this::postLogin);
+        app.post("/messages", this::postMessages);
 
         app.get("example-endpoint", this::exampleHandler);
 
 
         return app;
     }
+
+    private void postMessages(Context ctx) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = mapper.readValue(ctx.body(), Message.class);
+        if (message.getMessage_text() == ""){
+            ctx.status(400);
+            return;
+        }
+
+        Message addedMessage = messageService.addMessage(message);
+        
+        
+        if (addedMessage != null){
+            ctx.json(mapper.writeValueAsString(addedMessage));
+            return;
+        }else{
+            ctx.status(400);
+        }
+    }
+
+
+
 
     private void postLogin(Context ctx) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
