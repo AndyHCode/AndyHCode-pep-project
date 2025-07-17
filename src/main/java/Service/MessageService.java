@@ -6,6 +6,10 @@ import java.util.List;
 public class MessageService {
     private MessageDAO messageDAO;
 
+    public Message deleteMessageByID(int messageID){
+        return messageDAO.deleteMessageByID(messageID);
+    }
+
     public MessageService(){
         messageDAO = new MessageDAO();
     }

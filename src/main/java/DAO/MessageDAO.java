@@ -8,6 +8,28 @@ import java.util.List;
 
 public class MessageDAO {
 
+
+
+    public Message deleteMessageByID(int messageID){
+        Message message = getMessageByID(messageID);
+
+        if (message == null){
+            return message;
+        }
+
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try{
+            String sql = "DELETE FROM message WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, messageID);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return message;
+    }
+
     public List<Message> getAllMessages(){
         List<Message> messages = new ArrayList<>();
         Connection connection = ConnectionUtil.getConnection();
@@ -24,7 +46,7 @@ public class MessageDAO {
                         rs.getLong("time_posted_epoch")));
             }
         }catch(SQLException e){
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
 
 
@@ -52,7 +74,7 @@ public class MessageDAO {
             }
 
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
         return null;
 
@@ -78,7 +100,7 @@ public class MessageDAO {
                         message.getTime_posted_epoch());
             }
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
         return null;
     }
