@@ -50,20 +50,19 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageByID);
         app.get("/messages", this::getAllMessages);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesByAccountID);
-        
+
         app.delete("/messages/{message_id}", this::deleteMessageByID);
         app.patch("/messages/{message_id}", this::patchMessageByID);
-
-
-
 
         return app;
     }
 
-    private void patchMessageByID(Context ctx){
+    private void patchMessageByID(Context ctx) {
         int messageID = Integer.parseInt(ctx.pathParam("message_id"));
         Message message = ctx.bodyAsClass(Message.class);
-        if (message.getMessage_text().length() > 255 || message.getMessage_text() == ""){
+
+        // Checks for max length and if empty
+        if (message.getMessage_text().length() > 255 || message.getMessage_text() == "") {
             ctx.status(400);
             return;
         }
@@ -76,13 +75,13 @@ public class SocialMediaController {
         }
     }
 
-    private void getAllMessagesByAccountID (Context ctx){
+    private void getAllMessagesByAccountID(Context ctx) {
         int accountID = Integer.parseInt(ctx.pathParam("account_id"));
         List<Message> messages = messageService.getAllMessagesByAccountID(accountID);
         ctx.json(messages);
     }
 
-    private void deleteMessageByID(Context ctx){
+    private void deleteMessageByID(Context ctx) {
         int messageID = Integer.parseInt(ctx.pathParam("message_id"));
         Message message = messageService.deleteMessageByID(messageID);
         if (message != null) {
@@ -110,6 +109,7 @@ public class SocialMediaController {
     private void postMessages(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Message message = mapper.readValue(ctx.body(), Message.class);
+        // Checks for max length and if empty
         if (message.getMessage_text() == "" || message.getMessage_text().length() > 255) {
             ctx.status(400);
             return;
@@ -128,7 +128,7 @@ public class SocialMediaController {
     private void postLogin(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
-
+        // checks for empty username & password
         if (account.getUsername() == "" || account.getPassword() == "") {
             ctx.status(401);
             return;
@@ -154,8 +154,6 @@ public class SocialMediaController {
             ctx.status(400);
             return;
         }
-
-        // register user here
 
         Account addedAccount = accountService.addAccount(account);
         //
